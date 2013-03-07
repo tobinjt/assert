@@ -20,6 +20,8 @@ Would you prefer to write tests like this?
   }
 
 This package makes it easy.
+
+All functions return true if the test passes, and false if the test fails.
 */
 package assert
 
@@ -28,12 +30,21 @@ import (
 	"testing"
 )
 
-// Uses reflect.DeepEqual() to compare a and b, and calls
+// If reflect.DeepEqual(a, b) fails, call:
 //     t.Errorf("%s: %#v != %#v\n", message, a, b)
-// if the comparison fails.
 func Equal(t *testing.T, message string, a, b interface{}) bool {
 	if !reflect.DeepEqual(a, b) {
 		t.Errorf("%s: %#v != %#v\n", message, a, b)
+		return false
+	}
+	return true
+}
+
+// If err != nil, call:
+//   t.Errorf("Unexpected error: %s: %s\n", message, err)
+func ErrIsNil(t *testing.T, message string, err error) bool {
+	if err != nil {
+		t.Errorf("Unexpected error: %s: %s\n", message, err)
 		return false
 	}
 	return true
