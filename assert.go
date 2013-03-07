@@ -1,8 +1,6 @@
 /*
 Are you fed up writing tests like this?
 
-  import "reflect"
-  import "testing"
   func TestSomething(t *testing.T) {
           result := something()
           expected := []int{2, 9, 6}
@@ -13,8 +11,6 @@ Are you fed up writing tests like this?
 
 Would you prefer to write tests like this?
 
-  import "github.com/tobinjt/assert"
-  import "testing"
   func TestSomething(t *testing.T) {
   	assert.Equal(t, "something()", []int{2, 9, 6}, something())
   }
@@ -27,12 +23,18 @@ package assert
 
 import (
 	"reflect"
-	"testing"
 )
+
+/*
+An interface to enable writing tests for this package; you'll pass *testing.T.
+*/
+type T interface {
+	Errorf(format string, args ...interface{})
+}
 
 // If reflect.DeepEqual(a, b) fails, call:
 //     t.Errorf("%s: %#v != %#v\n", message, a, b)
-func Equal(t *testing.T, message string, a, b interface{}) bool {
+func Equal(t T, message string, a, b interface{}) bool {
 	if !reflect.DeepEqual(a, b) {
 		t.Errorf("%s: %#v != %#v\n", message, a, b)
 		return false
@@ -42,7 +44,7 @@ func Equal(t *testing.T, message string, a, b interface{}) bool {
 
 // If err != nil, call:
 //   t.Errorf("Unexpected error: %s: %s\n", message, err)
-func ErrIsNil(t *testing.T, message string, err error) bool {
+func ErrIsNil(t T, message string, err error) bool {
 	if err != nil {
 		t.Errorf("Unexpected error: %s: %s\n", message, err)
 		return false
