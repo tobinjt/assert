@@ -23,6 +23,7 @@ package assert
 
 import (
 	"reflect"
+	"strings"
 )
 
 /*
@@ -47,6 +48,24 @@ func Equal(t T, message string, a, b interface{}) bool {
 func ErrIsNil(t T, message string, err error) bool {
 	if err != nil {
 		t.Errorf("Unexpected error: %s: %s\n", message, err)
+		return false
+	}
+	return true
+}
+
+// If err == nil, call:
+//   t.Errorf("Error is nil: %s: %s\n", message)
+// If !strings.Contains(err.Error(), substr), call:
+//   t.Errorf("Expected substring missing: %s\nsubstring: %s\nerror: %v\n",
+//	message, substr, err)
+func ErrContains(t T, message string, err error, substr string) bool {
+	if err == nil {
+		t.Errorf("Error is nil: %s: %s\n", message)
+		return false
+	}
+	if !strings.Contains(err.Error(), substr) {
+		t.Errorf("Expected substring missing: %s\nsubstring: %s\nerror: %v\n",
+			message, substr, err)
 		return false
 	}
 	return true

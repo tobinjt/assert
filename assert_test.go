@@ -44,3 +44,21 @@ func TestErrIsNil(t *testing.T) {
 		t.Error("ErrIsNil: Errorf unexpectedly called")
 	}
 }
+
+func TestErrContains(t *testing.T) {
+	logger := NewTestLogger()
+	ErrContains(logger, "message", nil, "")
+	if 1 != logger.log["Errorf"] {
+		t.Error("ErrContains: Errorf not called for nil error")
+	}
+	logger = NewTestLogger()
+	ErrContains(logger, "message", errors.New("asdf"), "qwerty")
+	if 1 != logger.log["Errorf"] {
+		t.Error("ErrContains: Errorf not called for bad error message")
+	}
+	logger = NewTestLogger()
+	ErrContains(logger, "message", errors.New("asdf"), "asd")
+	if 0 != logger.log["Errorf"] {
+		t.Error("ErrContains: Errorf unexpectedly called")
+	}
+}
