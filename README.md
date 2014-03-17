@@ -24,3 +24,13 @@ Would you prefer to write tests like this?
     }
 
 This package makes it easy.
+
+All functions return true if the test passes, and false if the test fails.  This
+allows you to write tests like:
+
+    func TestSomething(t *testing.T) {
+            result, err := something()
+            if assert.ErrIsNil(t, "something()", err) {
+                    assert.Equal(t, "something()", 7, result)
+            }
+    }

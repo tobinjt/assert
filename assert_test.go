@@ -28,7 +28,7 @@ func TestEqual(t *testing.T) {
 	logger = NewTestLogger()
 	Equal(logger, "message", 42, 42)
 	if 0 != logger.log["Errorf"] {
-		t.Errorf("Equal: Errorf unexpectedly called for inputs 7, 23\n")
+		t.Errorf("Equal: Errorf unexpectedly called for inputs 42, 42\n")
 	}
 }
 
