@@ -45,11 +45,11 @@ type T interface {
 // Returns "filename:line_number" for the caller's caller.
 func getCallerSourceLocation() string {
 	_, file, line, ok := runtime.Caller(2)
-	if !ok {
-		return "unknown:unknown"
-	} else {
-		return fmt.Sprintf("%s:%d", file, line)
+	result := "unknown:unknown"
+	if ok {
+		result = fmt.Sprintf("%s:%d", file, line)
 	}
+	return result
 }
 
 // If reflect.DeepEqual(a, b) fails, call:
