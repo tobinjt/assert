@@ -86,7 +86,7 @@ func ErrContains(t T, message string, err error, substr string) bool {
 		return false
 	}
 	if !strings.Contains(err.Error(), substr) {
-		t.Errorf("%s: Expected substring missing: %s\nsubstring: %s\nerror: %v\n",
+		t.Errorf("%s: Expected substring missing: %s\nsubstring: %s\n    error: %v\n",
 			getCallerSourceLocation(), message, substr, err)
 		return false
 	}
