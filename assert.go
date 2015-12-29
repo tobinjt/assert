@@ -81,7 +81,7 @@ func ErrIsNil(t T, message string, err error) bool {
 //	file, line, message, substr, err)
 func ErrContains(t T, message string, err error, substr string) bool {
 	if err == nil {
-		t.Errorf("%s: Error is nil: %s: %s\n",
+		t.Errorf("%s: Error is nil: %s\n",
 			getCallerSourceLocation(), message)
 		return false
 	}
