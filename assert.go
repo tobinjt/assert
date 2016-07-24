@@ -1,4 +1,5 @@
-/*
+/*Package assert makes it easier to write tests.
+
 Are you fed up writing tests like this?
 
   func TestSomething(t *testing.T) {
@@ -15,7 +16,7 @@ Would you prefer to write tests like this?
   	assert.Equal(t, "something()", []int{2, 9, 6}, something())
   }
 
-This package makes it easy.
+This package supports the latter style of writing tests.
 
 All functions return true if the test passes, and false if the test fails.  This
 allows you to write tests like:
@@ -29,6 +30,7 @@ allows you to write tests like:
 package assert
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"runtime"
@@ -94,4 +96,33 @@ func ErrContains(t T, message string, err error, substr string) bool {
 		return false
 	}
 	return true
+}
+
+// Panics checks that a function called panic() with an expected error message.
+// The argument to panic() must be a string, and that string must contain the expected substring.
+// Usage is more complex than the other functions:
+//	func TestPanics(t *testing.T) {
+//		func() {
+//			// Do setup.
+//			// ....
+//			// assert.Panics() will be called when the enclosing anonymous function exits.
+//			defer assert.Panics(t, "something() did not panic properly", "expected substring")
+//			something(arg1, arg2)
+//		}()
+//
+//		// Next test of something().
+//	}
+func Panics(t T, message string, substr string) {
+	r := recover()
+	if r == nil {
+		t.Errorf("%s: recover() returned nil: %s\n",
+			getCallerSourceLocation(), message)
+		return
+	}
+	if str, ok := r.(string); ok {
+		err := errors.New(str)
+		ErrContains(t, message, err, substr)
+	} else {
+		t.Errorf("Return value from recover() wasn't a string: %v", message)
+	}
 }
