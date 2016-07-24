@@ -2,11 +2,11 @@
 Are you fed up writing tests like this?
 
   func TestSomething(t *testing.T) {
-          result := something()
-          expected := []int{2, 9, 6}
-          if !reflect.DeepEqual(expected, result) {
-  		t.Errorf("something(): %#v != %#v\n", expected, result)
-          }
+  	result := something()
+  	expected := []int{2, 9, 6}
+  	if !reflect.DeepEqual(expected, result) {
+  		t.Errorf("something(): got %#v, want %#v\n", result, expected)
+  	}
   }
 
 Would you prefer to write tests like this?
@@ -20,10 +20,10 @@ This package makes it easy.
 All functions return true if the test passes, and false if the test fails.  This
 allows you to write tests like:
   func TestSomething(t *testing.T) {
-	  result, err := something()
-	  if assert.ErrIsNil(t, "something()", err) {
-		  assert.Equal(t, "something()", 7, result)
-	  }
+  	result, err := something()
+  	if assert.ErrIsNil(t, "something()", err) {
+  		assert.Equal(t, "something()", 7, result)
+  	}
   }
 */
 package assert
@@ -36,7 +36,7 @@ import (
 )
 
 /*
-An interface to enable writing tests for this package; you'll pass *testing.T.
+T is an interface to enable writing tests for this package; you'll pass *testing.T in normal usage of this package.
 */
 type T interface {
 	Errorf(format string, args ...interface{})
@@ -52,17 +52,19 @@ func getCallerSourceLocation() string {
 	return result
 }
 
+// Equal checks that a == b.
 // If reflect.DeepEqual(a, b) fails, call:
-//     t.Errorf("%s:%d: %s: %#v != %#v\n", file, line, message, a, b)
+//     t.Errorf("%s:%d: %s: got %#v, want %#v\n", file, line, message, b, a)
 func Equal(t T, message string, a, b interface{}) bool {
 	if !reflect.DeepEqual(a, b) {
-		t.Errorf("%s: %s: %#v != %#v\n", getCallerSourceLocation(),
-			message, a, b)
+		t.Errorf("%s: %s: got %#v, want %#v\n", getCallerSourceLocation(),
+			message, b, a)
 		return false
 	}
 	return true
 }
 
+// ErrIsNil checks that err == nil.
 // If err != nil, call:
 //   t.Errorf("%s:%d: Unexpected error: %s: %s\n", file, line, message, err)
 func ErrIsNil(t T, message string, err error) bool {
@@ -74,6 +76,7 @@ func ErrIsNil(t T, message string, err error) bool {
 	return true
 }
 
+// ErrContains checks that an error contains the expected substring.
 // If err == nil, call:
 //   t.Errorf("%s:%d: Error is nil: %s: %s\n", file, line, message)
 // If !strings.Contains(err.Error(), substr), call:
