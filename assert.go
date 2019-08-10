@@ -2,30 +2,30 @@
 
 Are you fed up writing tests like this?
 
-  func TestSomething(t *testing.T) {
-  	result := something()
-  	expected := []int{2, 9, 6}
-  	if !reflect.DeepEqual(expected, result) {
-  		t.Errorf("something(): got %#v, want %#v\n", result, expected)
-  	}
-  }
+	func TestSomething(t *testing.T) {
+		result := something()
+		expected := []int{2, 9, 6}
+		if !reflect.DeepEqual(expected, result) {
+			t.Errorf("something(): got %#v, want %#v\n", result, expected)
+		}
+	}
 
 Would you prefer to write tests like this?
 
-  func TestSomething(t *testing.T) {
-  	assert.Equal(t, "something()", []int{2, 9, 6}, something())
-  }
+	func TestSomething(t *testing.T) {
+		assert.Equal(t, "something()", []int{2, 9, 6}, something())
+	}
 
 This package supports the latter style of writing tests.
 
 All functions return true if the test passes, and false if the test fails.  This
 allows you to write tests like:
-  func TestSomething(t *testing.T) {
-  	result, err := something()
-  	if assert.ErrIsNil(t, "something()", err) {
-  		assert.Equal(t, "something()", 7, result)
-  	}
-  }
+	func TestSomething(t *testing.T) {
+		result, err := something()
+		if assert.ErrIsNil(t, "something()", err) {
+			assert.Equal(t, "something()", 7, result)
+		}
+	}
 */
 package assert
 
