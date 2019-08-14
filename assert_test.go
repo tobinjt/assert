@@ -20,6 +20,22 @@ func (t *testlogger) Errorf(message string, _ ...interface{}) {
 	t.message = message
 }
 
+func TestErrorf(t *testing.T) {
+	logger := newTestLogger()
+	f := func() {
+		logger.Errorf("message")
+	}
+	f()
+	f()
+	f()
+	if 3 != logger.counter {
+		t.Errorf("Logger: counter: got %v, want %v", logger.counter, 3)
+	}
+	if "message" != logger.message {
+		t.Errorf("Logger: message: got %v, want message", logger.message)
+	}
+}
+
 func TestEqual(t *testing.T) {
 	logger := newTestLogger()
 	Equal(logger, "message", 7, 23)
