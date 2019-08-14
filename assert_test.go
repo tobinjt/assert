@@ -33,6 +33,19 @@ func TestEqual(t *testing.T) {
 	}
 }
 
+func TestFloatsAreClose(t *testing.T) {
+	logger := newTestLogger()
+	FloatsAreClose(logger, "message", 2.123, 2.124, 2)
+	if 0 != logger.counter {
+		t.Errorf("FloatsAreClose: Errorf unexpectedly called for inputs 2.123, 2.124, 2\n")
+	}
+	logger = newTestLogger()
+	FloatsAreClose(logger, "message", 2.123, 2.125, 3)
+	if 1 != logger.counter {
+		t.Errorf("FloatsAreClose: Errorf not called for inputs 2.123, 2.125, 3; message: %s\n", logger.message)
+	}
+}
+
 func TestErrIsNil(t *testing.T) {
 	logger := newTestLogger()
 	ErrIsNil(logger, "message", errors.New("A dummy error"))

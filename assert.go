@@ -32,6 +32,7 @@ package assert
 import (
 	"errors"
 	"fmt"
+	"math"
 	"reflect"
 	"runtime"
 	"strings"
@@ -61,6 +62,23 @@ func Equal(t T, message string, a, b interface{}) bool {
 	if !reflect.DeepEqual(a, b) {
 		t.Errorf("%s: %s: got %#v, want %#v\n", getCallerSourceLocation(),
 			message, b, a)
+		return false
+	}
+	return true
+}
+
+// FloatsAreClose checks that the first precision digits after the decimal point
+// of a and b are equal.  E.g. FloatsAreClose(t, "", 0.1234567, 0.1234569, 6)
+// will return true
+// BEWARE: floating point precision is inaccurate enough that
+// FloatsAreClose(2.123, 2.124, 3) will return true because 0.1**3 ==
+// 0.0010000000000000002 and 2.124-2.123 == 0.0009999999999998899.
+func FloatsAreClose(t T, message string, a, b float64, precision int) bool {
+	threshold := math.Pow(0.1, float64(precision))
+	difference := math.Abs(a - b)
+	if difference > threshold {
+		t.Errorf("%s: %s: floats %v and %v differ by %v > threshold %v",
+			getCallerSourceLocation(), message, a, b, difference, threshold)
 		return false
 	}
 	return true
