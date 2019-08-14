@@ -2,6 +2,7 @@ package assert
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 	"testing"
 )
@@ -15,9 +16,9 @@ func newTestLogger() *testlogger {
 	return &testlogger{}
 }
 
-func (t *testlogger) Errorf(message string, _ ...interface{}) {
+func (t *testlogger) Errorf(message string, args ...interface{}) {
 	t.counter++
-	t.message = message
+	t.message = fmt.Sprintf(message, args...)
 }
 
 func TestErrorf(t *testing.T) {
@@ -45,7 +46,7 @@ func TestEqual(t *testing.T) {
 	logger = newTestLogger()
 	Equal(logger, "message", 42, 42)
 	if 0 != logger.counter {
-		t.Errorf("Equal: Errorf unexpectedly called for inputs 42, 42\n")
+		t.Errorf("Equal: Errorf unexpectedly called for inputs 42, 42: %s\n", logger.message)
 	}
 }
 
@@ -126,7 +127,7 @@ func TestPanics(t *testing.T) {
 	if 1 != logger.counter {
 		t.Error("Panics: Errorf was not called even though panic was not called")
 	}
-	if logger.message != "%s: recover() returned nil: %s\n" {
+	if !strings.Contains(logger.message, "recover() returned nil:") {
 		t.Errorf("Panics: bad message: got %q, want %q", logger.message, "%s: recover() returned nil: %s\n")
 	}
 
