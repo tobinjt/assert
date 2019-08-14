@@ -54,7 +54,7 @@ func TestFloatsAreClose(t *testing.T) {
 	logger := newTestLogger()
 	FloatsAreClose(logger, "message", 2.123, 2.124, 2)
 	if 0 != logger.counter {
-		t.Errorf("FloatsAreClose: Errorf unexpectedly called for inputs 2.123, 2.124, 2\n")
+		t.Errorf("FloatsAreClose: Errorf unexpectedly called for inputs 2.123, 2.124, 2: %s\n", logger.message)
 	}
 	logger = newTestLogger()
 	FloatsAreClose(logger, "message", 2.123, 2.125, 3)
@@ -72,7 +72,7 @@ func TestErrIsNil(t *testing.T) {
 	logger = newTestLogger()
 	ErrIsNil(logger, "message", nil)
 	if 0 != logger.counter {
-		t.Error("ErrIsNil: Errorf unexpectedly called")
+		t.Errorf("ErrIsNil: Errorf unexpectedly called: %s", logger.message)
 	}
 }
 
@@ -90,7 +90,7 @@ func TestErrContains(t *testing.T) {
 	logger = newTestLogger()
 	ErrContains(logger, "message", errors.New("asdf"), "asd")
 	if 0 != logger.counter {
-		t.Error("ErrContains: Errorf unexpectedly called")
+		t.Errorf("ErrContains: Errorf unexpectedly called: %s", logger.message)
 	}
 }
 
@@ -102,7 +102,7 @@ func TestPanics(t *testing.T) {
 		panic("I panicked :(")
 	}()
 	if 0 != logger.counter {
-		t.Error("Panics: Errorf was called even though panic was called")
+		t.Errorf("Panics: Errorf was called even though panic was called: %s", logger.message)
 	}
 
 	// Panics with bad error message.
@@ -114,7 +114,6 @@ func TestPanics(t *testing.T) {
 	if 1 != logger.counter {
 		t.Error("Panics: Errorf was not called even though panic was called")
 	}
-	// ErrContains calls t.Errorf, but the Errorf we use in testing doesn't do formatting, so it won't contain the message passed to Panics; instead we check for the fixed string from ErrContains.
 	if !strings.Contains(logger.message, "Expected substring missing") {
 		t.Errorf("Panics: bad message: got %q, want %q", logger.message, "Expected substring missing")
 	}
