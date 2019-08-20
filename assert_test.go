@@ -126,7 +126,7 @@ func TestPanics(t *testing.T) {
 	if 1 != logger.counter {
 		t.Error("Panics: Errorf was not called even though panic was not called")
 	}
-	if !strings.Contains(logger.message, "recover() returned nil:") {
+	if !strings.Contains(logger.message, "Nothing called panic():") {
 		t.Errorf("Panics: bad message: got %q, want %q", logger.message, "%s: recover() returned nil: %s\n")
 	}
 

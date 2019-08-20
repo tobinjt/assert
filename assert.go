@@ -133,8 +133,7 @@ func ErrContains(t T, message string, err error, substr string) bool {
 func Panics(t T, message string, substr string) {
 	r := recover()
 	if r == nil {
-		t.Errorf("%s: recover() returned nil: %s\n",
-			getCallerSourceLocation(), message)
+		t.Errorf("Nothing called panic(): %s\n", message)
 		return
 	}
 	if str, ok := r.(string); ok {
