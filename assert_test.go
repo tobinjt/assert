@@ -37,6 +37,29 @@ func TestErrorf(t *testing.T) {
 	}
 }
 
+func TestFailedAssertionCounter(t *testing.T) {
+	if 0 != failedAssertionCounter {
+		t.Errorf("failedAssertionCounter: want 0, got %v", failedAssertionCounter)
+	}
+	logger := newTestLogger()
+	Equal(logger, "message", 1, 2)
+	Equal(logger, "message", 1, 2)
+	Equal(logger, "message", 1, 2)
+	if 3 != failedAssertionCounter {
+		t.Errorf("failedAssertionCounter: want 3, got %v", failedAssertionCounter)
+	}
+	if 3 != FailedAssertionCounter() {
+		t.Errorf("FailedAssertionCounter: want 3, got %v", FailedAssertionCounter())
+	}
+	ResetFailedAssertionCounter()
+	if 0 != failedAssertionCounter {
+		t.Errorf("failedAssertionCounter: want 0, got %v", failedAssertionCounter)
+	}
+	if 0 != FailedAssertionCounter() {
+		t.Errorf("FailedAssertionCounter: want 0, got %v", FailedAssertionCounter())
+	}
+}
+
 func TestEqual(t *testing.T) {
 	logger := newTestLogger()
 	Equal(logger, "message", 7, 23)

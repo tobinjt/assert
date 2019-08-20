@@ -55,6 +55,18 @@ func getCallerSourceLocation() string {
 	return result
 }
 
+var failedAssertionCounter int
+
+// FailedAssertionCounter returns the counter of failed assertions.
+func FailedAssertionCounter() int {
+	return failedAssertionCounter
+}
+
+// ResetFailedAssertionCounter resets the counter of failed assertions.
+func ResetFailedAssertionCounter() {
+	failedAssertionCounter = 0
+}
+
 // Equal checks that a == b.
 // If reflect.DeepEqual(a, b) fails, call:
 //     t.Errorf("%s:%d: %s: got %#v, want %#v\n", file, line, message, b, a)
@@ -62,6 +74,7 @@ func Equal(t T, message string, a, b interface{}) bool {
 	if !reflect.DeepEqual(a, b) {
 		t.Errorf("%s: %s: got %#v, want %#v\n", getCallerSourceLocation(),
 			message, b, a)
+		failedAssertionCounter++
 		return false
 	}
 	return true
@@ -79,6 +92,7 @@ func FloatsAreClose(t T, message string, a, b float64, precision int) bool {
 	if difference > threshold {
 		t.Errorf("%s: %s: floats %v and %v differ by %v > threshold %v",
 			getCallerSourceLocation(), message, a, b, difference, threshold)
+		failedAssertionCounter++
 		return false
 	}
 	return true
@@ -91,6 +105,7 @@ func ErrIsNil(t T, message string, err error) bool {
 	if err != nil {
 		t.Errorf("%s: Unexpected error: %s: %s\n",
 			getCallerSourceLocation(), message, err)
+		failedAssertionCounter++
 		return false
 	}
 	return true
@@ -106,11 +121,13 @@ func ErrContains(t T, message string, err error, substr string) bool {
 	if err == nil {
 		t.Errorf("%s: Error is nil: %s\n",
 			getCallerSourceLocation(), message)
+		failedAssertionCounter++
 		return false
 	}
 	if !strings.Contains(err.Error(), substr) {
 		t.Errorf("%s: Expected substring missing: %s\nsubstring: %s\n    error: %v\n",
 			getCallerSourceLocation(), message, substr, err)
+		failedAssertionCounter++
 		return false
 	}
 	return true
